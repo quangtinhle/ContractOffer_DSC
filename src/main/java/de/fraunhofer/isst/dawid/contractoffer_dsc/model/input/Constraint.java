@@ -3,7 +3,8 @@ package de.fraunhofer.isst.dawid.contractoffer_dsc.model.input;
 import lombok.Getter;
 import lombok.Setter;
 
-
+@Getter
+@Setter
 public class Constraint {
 
     private String dataHistory;
