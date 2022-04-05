@@ -32,6 +32,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.fraunhofer.iese.ids.odrl</groupId>
+            <artifactId>policy-library</artifactId>
+            <version>1.0.4</version>
+        </dependency>
     </dependencies>
 
     <build>

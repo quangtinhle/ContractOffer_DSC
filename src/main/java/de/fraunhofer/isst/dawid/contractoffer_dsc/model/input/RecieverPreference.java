@@ -12,6 +12,6 @@ public class RecieverPreference {
         private Boolean active;
         private String dataProvider;
         private String targetData;
-        private List<Constraint> constraints;
+        private Constraint constraints;
 
 }
