@@ -30,17 +30,19 @@ public class IDSPolicyRestController {
         //conditionList = policyService.getListPolicyPattern();
         policyList = policyService.getPolicyList();
         contractService = new ContractService(policyList);
-        rulesLocationList = contractService.getLocationRule();
+        //rulesLocationList = contractService.getLocationRule();
         for (Hashtable a: policyList
              ) {
             System.out.println(a);
 
         }
-        for (String s:rulesLocationList
+        /*for (String s:rulesLocationList
              ) {
             System.out.println(s);
 
-        }
+        }*/
+        String contract = contractService.getContractOfferProvider();
+        System.out.println(contract);
         return recieverPreference.getPreferenceUUID();
     }
 }
