@@ -20,13 +20,12 @@ public class PolicyService {
 
         JsonIDSConverter converter = new JsonIDSConverter(constraints);
         List<Condition> conditionList = converter.getConstraintList();
-        //System.out.println(converter.createPolicy());
         return conditionList;
 
     }
 
     public List<Hashtable> getPolicyList() {
-        List<Hashtable> listPolicy = new ArrayList<>();
+        List<Hashtable> listPolicy;
         JsonIDSConverter converter = new JsonIDSConverter(constraints);
         listPolicy = converter.getPolicylist();
         return listPolicy;

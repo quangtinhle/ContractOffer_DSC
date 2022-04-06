@@ -25,8 +25,13 @@ public class IDSPolicyRestController {
 
         Constraint constraint = recieverPreference.getConstraints();
         policyService = new PolicyService(constraint);
-        conditionList = policyService.getListPolicyPattern();
+        //conditionList = policyService.getListPolicyPattern();
         policyList = policyService.getPolicyList();
+        for (Hashtable a: policyList
+             ) {
+            System.out.println(a);
+
+        }
         return recieverPreference.getPreferenceUUID();
     }
 }

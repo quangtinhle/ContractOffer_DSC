@@ -66,7 +66,7 @@ public class JsonIDSConverter {
         if (!constraintInput.getDataConsumer().equals("")) {
             RightOperandType rightOperandType = RightOperandType.ANYURI;
             ConditionType conditionType = ConditionType.CONSTRAINT;
-            LeftOperand leftOperand = LeftOperand.CONNECTOR;
+            LeftOperand leftOperand = LeftOperand.SYSTEM;
             ArrayList<RightOperand> rightOperands = new ArrayList<>();
             RightOperand rightOperand = new RightOperand(constraintInput.getDataConsumer(), rightOperandType);
             rightOperands.add(rightOperand);
@@ -283,7 +283,7 @@ public class JsonIDSConverter {
 
     public String createPolicy() {
         String jsonPolicyString = "";
-        if(constraints.size()>0) {
+        if(constraints.size()>0 || preDuties.size() >0) {
         String policyUID = baseUid + UUID.randomUUID();
         rules.get(0).setConstraints((ArrayList<Condition>) constraints);
         if (postDuties.size() > 0) {
@@ -291,6 +291,7 @@ public class JsonIDSConverter {
         }
         if (preDuties.size() > 0) {
             rules.get(0).setPreduties((ArrayList<Rule>) preDuties);
+            preDuties.remove(0);
         }
         OdrlPolicy odrlPolicy = new OdrlPolicy();
         //odrlPolicy.setProvider(createProvider());
