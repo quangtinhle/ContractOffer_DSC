@@ -1,7 +1,9 @@
 package de.fraunhofer.isst.dawid.contractoffer_dsc.controller;
 
 import de.fraunhofer.iese.ids.odrl.policy.library.model.Condition;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.model.convert.RecieverPreferenceConvert;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.Constraint;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.ContractInformation;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.RecieverPreference;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ContractService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.PolicyService;
@@ -29,20 +31,11 @@ public class IDSPolicyRestController {
         policyService = new PolicyService(constraint);
         //conditionList = policyService.getListPolicyPattern();
         policyList = policyService.getPolicyList();
-        contractService = new ContractService(policyList);
+        ContractInformation contractInformation = RecieverPreferenceConvert.convertToContractInformation(recieverPreference);
+        contractService = new ContractService(policyList, contractInformation);
         //rulesLocationList = contractService.getLocationRule();
-        for (Hashtable a: policyList
-             ) {
-            System.out.println(a);
-
-        }
-        /*for (String s:rulesLocationList
-             ) {
-            System.out.println(s);
-
-        }*/
+        contractService.setContractInformation(contractInformation);
         String contract = contractService.getContractOfferProvider();
-        System.out.println(contract);
-        return recieverPreference.getPreferenceUUID();
+        return contract;
     }
 }

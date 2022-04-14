@@ -14,4 +14,5 @@ public class Constraint {
     private String identifiability;
     private String usagePeriod;
     private String purpose;
+    private String counter;
 }

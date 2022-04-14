@@ -42,6 +42,7 @@ public class JsonIDSConverter {
         addPurposeCondition();
         addMinCompensationCondition();
         addUsagePeriod();
+        addCounterCondition();
 
         return constraints;
     }
@@ -281,6 +282,19 @@ public class JsonIDSConverter {
 
     }
 
+    public boolean addCounterCondition() {
+        if (constraintInput.getCounter() != "") {
+            RightOperand rightOperand = new RightOperand(constraintInput.getCounter(), RightOperandType.DECIMAL);
+            ArrayList<RightOperand> rightOperands = new ArrayList<>();
+            rightOperands.add(rightOperand);
+            Condition countCondition = new Condition(ConditionType.CONSTRAINT, LeftOperand.COUNT, Operator.LTEQ,
+                    rightOperands, null);
+            constraints.add(countCondition);
+            return true;
+        }
+        return false;
+    }
+
     public String createPolicy() {
         String jsonPolicyString = "";
         if(constraints.size()>0 || preDuties.size() >0) {
@@ -328,21 +342,22 @@ public class JsonIDSConverter {
 
     public List<Hashtable> getPolicylist() {
 
-        addDataHistory();
+        //addDataHistory();
+        //convertHashtable();
+        //addConsumerCondition();
+        //convertHashtable();
+        //addLocationCondition();
+        //convertHashtable();
+        //addMinCompensationCondition();
+        //convertHashtable();
+        //addPreDuties();
+        //convertHashtable();
+        //addUsagePeriod();
+        //convertHashtable();
+        //addPurposeCondition();
+        //onvertHashtable();
+        addCounterCondition();
         convertHashtable();
-        addConsumerCondition();
-        convertHashtable();
-        addLocationCondition();
-        convertHashtable();
-        addMinCompensationCondition();
-        convertHashtable();
-        addPreDuties();
-        convertHashtable();
-        addUsagePeriod();
-        convertHashtable();
-        addPurposeCondition();
-        convertHashtable();
-
         return policylist;
     }
 

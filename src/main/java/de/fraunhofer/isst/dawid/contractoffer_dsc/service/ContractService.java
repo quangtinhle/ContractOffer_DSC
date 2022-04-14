@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dawid.contractoffer_dsc.service;
 
 import com.google.gson.Gson;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.connection.OkHttpConnection;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.ContractInformation;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import okio.BufferedSink;
@@ -17,10 +18,12 @@ public class ContractService {
 
     private List<Hashtable> policyList;
 
-    public ContractService(List<Hashtable> policyList) {
+    public ContractService(List<Hashtable> policyList, ContractInformation contractInformation) {
         this.policyList = policyList;
+        setContractInformation(contractInformation);
         createDataModel();
         createDSCResource(getLocationRule());
+        //createDSCResource(testRule());
     }
 
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
@@ -33,8 +36,13 @@ public class ContractService {
     String catalog, offer, representation, artifact, contract = "";
 
     String provider = "{\"provider\":\"http://isst.fraunhofer.de\"}";
-    String value = "{\"title\":\"Ten du lieu hay kieu du lieu\", \"value\": \"Ihr Ausweis für die digitale Welt\"}";
+    String jsonContract = "";
+    //String value = "{\"title\":\"DataType or Data\", \"value\": \"Ihr Ausweis für die digitale Welt\"}";
+    String accessUrl = "{\"title\":\"Get the Weather Informationen\", \"accessUrl\": \"http://localhost:8888/wetters\"}";
 
+    public void setContractInformation(ContractInformation contractInformation) {
+        jsonContract =  gson.toJson(contractInformation);
+    }
 
     public void createDataModel() {
         catalog = getLocation(apiUrl + "catalogs", "{\"title\":\"Medizinische Daten\"}");
@@ -43,9 +51,11 @@ public class ContractService {
         System.out.println(offer);
         representation = getLocation(apiUrl + "representations", "{\"title\":\"Personbezogenen Daten\"}");
         System.out.println(representation);
-        artifact = getLocation(apiUrl + "artifacts", value);
+        artifact = getLocation(apiUrl + "artifacts", accessUrl);
         System.out.println(artifact);
-        contract = getLocation(apiUrl + "contracts", provider);
+        //contract = getLocation(apiUrl + "contracts", provider);
+        //System.out.println(jsonContract);
+        contract = getLocation(apiUrl + "contracts", jsonContract);
         System.out.println(contract);
 
     }
@@ -61,11 +71,15 @@ public class ContractService {
         List<String> ruleLocationsList = new ArrayList<>();
         for (Hashtable hashtable : policyList
         ) {
-            String location = connection.getLocation(apiUrl + "rules", gson.toJson(hashtable));
+            String rule= gson.toJson(hashtable);
+            String location = connection.getLocation(apiUrl + "rules", rule);
+            System.out.println(rule);
             ruleLocationsList.add(location);
+            System.out.println(location);
         }
         return ruleLocationsList;
     }
+
 
     public void createDSCResource(List<String> ruleList) {
         addResourcetoCatalog(catalog, offer);
