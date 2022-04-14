@@ -31,10 +31,9 @@ public class IDSPolicyRestController {
         policyService = new PolicyService(constraint);
         //conditionList = policyService.getListPolicyPattern();
         policyList = policyService.getPolicyList();
-        ContractInformation contractInformation = RecieverPreferenceConvert.convertToContractInformation(recieverPreference);
-        contractService = new ContractService(policyList, contractInformation);
+        contractService = new ContractService(policyList, recieverPreference);
         //rulesLocationList = contractService.getLocationRule();
-        contractService.setContractInformation(contractInformation);
+
         String contract = contractService.getContractOfferProvider();
         return contract;
     }

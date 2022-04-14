@@ -2,7 +2,9 @@ package de.fraunhofer.isst.dawid.contractoffer_dsc.service;
 
 import com.google.gson.Gson;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.connection.OkHttpConnection;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.model.convert.RecieverPreferenceConvert;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.ContractInformation;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.RecieverPreference;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import okio.BufferedSink;
@@ -17,13 +19,15 @@ import java.util.List;
 public class ContractService {
 
     private List<Hashtable> policyList;
+    private ContractInformation contractInformation;
 
-    public ContractService(List<Hashtable> policyList, ContractInformation contractInformation) {
+    public ContractService(List<Hashtable> policyList, RecieverPreference recieverPreference) {
         this.policyList = policyList;
-        setContractInformation(contractInformation);
+        this.contractInformation = RecieverPreferenceConvert.convertToContractInformation(recieverPreference);
+        setContractInformation();
+        setAccessUrl(recieverPreference);
         createDataModel();
         createDSCResource(getLocationRule());
-        //createDSCResource(testRule());
     }
 
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
@@ -38,10 +42,14 @@ public class ContractService {
     String provider = "{\"provider\":\"http://isst.fraunhofer.de\"}";
     String jsonContract = "";
     //String value = "{\"title\":\"DataType or Data\", \"value\": \"Ihr Ausweis für die digitale Welt\"}";
-    String accessUrl = "{\"title\":\"Get the Weather Informationen\", \"accessUrl\": \"http://localhost:8888/wetters\"}";
+    String accessUrl ="";
 
-    public void setContractInformation(ContractInformation contractInformation) {
+    public void setContractInformation() {
         jsonContract =  gson.toJson(contractInformation);
+    }
+
+    public void setAccessUrl(RecieverPreference recieverPreference) {
+        accessUrl= "{\"accessUrl\":\"" + recieverPreference.getTargetData() + "\"}";
     }
 
     public void createDataModel() {
