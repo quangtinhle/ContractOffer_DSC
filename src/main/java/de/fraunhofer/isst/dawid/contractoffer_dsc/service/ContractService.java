@@ -10,6 +10,7 @@ import okhttp3.*;
 import okio.BufferedSink;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +22,22 @@ public class ContractService {
     private List<Hashtable> policyList;
     private ContractInformation contractInformation;
 
+    private final OkHttpConnection connection = OkHttpConnection.getInstance();
+
+    private Gson gson;
+    @Value("${providerUrl}")
+    private String providerUrl;
+
+    String apiUrl = "http://localhost:8080/api/";
+    String descriptionUrl = "http://localhost:8080/api/ids/description";
+    String recipient = "http://localhost:8080/api/ids/data";
+
+    String catalog, offer, representation, artifact, contract = "";
+    String jsonContract = "";
+    String accessUrl ="";
+
     public ContractService(List<Hashtable> policyList, RecieverPreference recieverPreference) {
+        this.gson = new Gson();
         this.policyList = policyList;
         this.contractInformation = RecieverPreferenceConvert.convertToContractInformation(recieverPreference);
         setContractInformation();
@@ -30,34 +46,27 @@ public class ContractService {
         createDSCResource(getLocationRule());
     }
 
-    private final OkHttpConnection connection = OkHttpConnection.getInstance();
 
-    Gson gson = new Gson();
-    String apiUrl = "http://localhost:8080/api/";
-    String descriptionUrl = "http://localhost:8080/api/ids/description";
-    String recipient = "http://localhost:8080/api/ids/data";
-
-    String catalog, offer, representation, artifact, contract = "";
-
-    String provider = "{\"provider\":\"http://isst.fraunhofer.de\"}";
-    String jsonContract = "";
-    //String value = "{\"title\":\"DataType or Data\", \"value\": \"Ihr Ausweis für die digitale Welt\"}";
-    String accessUrl ="";
 
     public void setContractInformation() {
         jsonContract =  gson.toJson(contractInformation);
     }
 
     public void setAccessUrl(RecieverPreference recieverPreference) {
-        accessUrl= "{\"accessUrl\":\"" + recieverPreference.getTargetData() + "\"}";
+        if(recieverPreference.getTargetData()!="") {
+            accessUrl = "{\"accessUrl\":\"" + recieverPreference.getTargetData() + "\"}";
+        }
+        else {
+            accessUrl = "{\"value\":\" This is a test value \"}";
+        }
     }
 
     public void createDataModel() {
-        catalog = getLocation(apiUrl + "catalogs", "{\"title\":\"Medizinische Daten\"}");
+        catalog = getLocation(apiUrl + "catalogs", "{}");
         System.out.println(catalog);
         offer = getLocation(apiUrl + "offers", "{}");
         System.out.println(offer);
-        representation = getLocation(apiUrl + "representations", "{\"title\":\"Personbezogenen Daten\"}");
+        representation = getLocation(apiUrl + "representations", "{}");
         System.out.println(representation);
         artifact = getLocation(apiUrl + "artifacts", accessUrl);
         System.out.println(artifact);

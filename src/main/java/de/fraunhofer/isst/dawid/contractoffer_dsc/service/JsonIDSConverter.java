@@ -344,8 +344,8 @@ public class JsonIDSConverter {
 
         //addDataHistory();
         //convertHashtable();
-        //addConsumerCondition();
-        //convertHashtable();
+        addConsumerCondition();
+        convertHashtable();
         //addLocationCondition();
         //convertHashtable();
         //addMinCompensationCondition();
