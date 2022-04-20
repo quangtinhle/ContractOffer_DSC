@@ -5,11 +5,13 @@ import de.fraunhofer.isst.dawid.contractoffer_dsc.model.convert.RecieverPreferen
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.Constraint;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.ContractInformation;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.RecieverPreference;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ConsumerService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ContractService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.PolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -36,5 +38,11 @@ public class IDSPolicyRestController {
 
         String contract = contractService.getContractOfferProvider();
         return contract;
+    }
+
+    @PostMapping("/contractagreement")
+    public String getContractAgreement(@RequestParam String recipient) {
+        ConsumerService consumerService = new ConsumerService(recipient);
+        return consumerService.getContractAgreement();
     }
 }

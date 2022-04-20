@@ -352,8 +352,8 @@ public class JsonIDSConverter {
         //convertHashtable();
         //addPreDuties();
         //convertHashtable();
-        //addUsagePeriod();
-        //convertHashtable();
+        addUsagePeriod();
+        convertHashtable();
         //addPurposeCondition();
         //onvertHashtable();
         addCounterCondition();
