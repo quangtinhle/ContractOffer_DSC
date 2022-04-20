@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ConsumerService {
 
@@ -21,6 +22,7 @@ public class ConsumerService {
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
     private String providerUrl;
     private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
+    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
 
     public ConsumerService(String providerUrl) {
         this.providerUrl = providerUrl;
@@ -34,21 +36,24 @@ public class ConsumerService {
 
         IdsOfferedResource idsOfferedResource = resourceCatalog.getIdsOfferedResources().get(0);
         IdsContractOffer idsContractOffer = idsOfferedResource.getIdsContractOffer().get(0);
-        IdsPermission idsPermission = idsContractOffer.getIdsPermission().get(0);
+        List<IdsPermission> idsPermission = idsContractOffer.getIdsPermission();
 
         System.out.println(new Gson().toJson(idsPermission));
         IdsReprensentation idsReprensentation = idsOfferedResource.getIdsReprensentation().get(0);
         IdsInstance idsInstance = idsReprensentation.getIdsInstance().get(0);
 
         String artifactId = idsInstance.getId();
-        String offersId = idsContractOffer.getId();
-        idsPermission.setIdsTarget(artifactId);
+        String offersId = idsOfferedResource.getId();
+        for (IdsPermission i: idsPermission
+             ) {
+            i.setIdsTarget(artifactId);
+        }
 
         ObjectMapper om = new ObjectMapper();
         String body = om.writeValueAsString(idsPermission);
         System.out.println(body);
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(consumerDescriptionUrl).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(consumerContractUrl).newBuilder();
 
         urlBuilder.addQueryParameter("recipient", providerUrl);
         urlBuilder.addQueryParameter("resourceIds", offersId);
