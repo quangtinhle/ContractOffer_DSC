@@ -368,12 +368,12 @@ public class JsonIDSConverter {
         //convertHashtable();
         //addPreDuties();
         //convertHashtable();
-        addUsagePeriod();
-        convertHashtable();
-        //addPurposeCondition();
-        //onvertHashtable();
-        //addCounterCondition();
+        //addUsagePeriod();
         //convertHashtable();
+        addPurposeCondition();
+        convertHashtable();
+        addCounterCondition();
+        convertHashtable();
         return policylist;
     }
 

@@ -139,7 +139,7 @@ public class ContractService {
     @SneakyThrows
     private void addRuletoContract(String contract, String rule) {
         Request request = connection.getRequest(contract + "/rules", "[\"" + rule + "\"]");
-        connection.getResponse(request);
+        System.out.println(connection.getResponse(request));
 
     }
     @SneakyThrows
