@@ -47,6 +47,27 @@ public class JsonIDSConverter {
         return constraints;
     }
 
+    public List<Hashtable> getPolicylist() {
+
+        //addDataHistory();
+        //convertHashtable();
+        //addConsumerCondition();
+        //convertHashtable();
+        //addLocationCondition();
+        //convertHashtable();
+        //addMinCompensationCondition();
+        //convertHashtable();
+        //addPreDuties();
+        addIdentifiabilityCondition();
+        convertHashtable();
+        //addUsagePeriod();
+        //convertHashtable();
+        addPurposeCondition();
+        convertHashtable();
+        //addCounterCondition();
+        //convertHashtable();
+        return policylist;
+    }
     public boolean addLocationCondition() {
 
         if (!constraintInput.getLocation().equals("")) {
@@ -88,6 +109,23 @@ public class JsonIDSConverter {
             RightOperand rightOperand = new RightOperand(constraintInput.getPurpose(), rightOperandType);
             rightOperands.add(rightOperand);
             Condition constraint = new Condition(conditionType, leftOperand, Operator.SAME_AS, rightOperands, null);
+            constraints.add(constraint);
+            return true;
+
+        }
+        return false;
+    }
+
+    public boolean addIdentifiabilityCondition() {
+
+        if (!constraintInput.getIdentifiability().equals("")) {
+            RightOperandType rightOperandType = RightOperandType.STRING;
+            ConditionType conditionType = ConditionType.CONSTRAINT;
+            LeftOperand leftOperand = LeftOperand.STATE;
+            ArrayList<RightOperand> rightOperands = new ArrayList<>();
+            RightOperand rightOperand = new RightOperand(constraintInput.getIdentifiability(), rightOperandType);
+            rightOperands.add(rightOperand);
+            Condition constraint = new Condition(conditionType, leftOperand, Operator.HAS_STATE, rightOperands, null);
             constraints.add(constraint);
             return true;
 
@@ -330,7 +368,9 @@ public class JsonIDSConverter {
         odrlPolicy.setType(PolicyType.getFromIdsString("ids:Permission"));
         //odrlPolicy.setType(PolicyType.getFromIdsString("ids:Contract" + "Offer"));
         jsonPolicyString = OdrlCreator.createODRL(odrlPolicy);
-        constraints.remove(0);
+        if(constraints.size()>0) {
+            constraints.remove(0);
+        }
         }
         return jsonPolicyString;
     }
@@ -356,26 +396,7 @@ public class JsonIDSConverter {
         }
 
 
-    public List<Hashtable> getPolicylist() {
 
-        //addDataHistory();
-        //convertHashtable();
-        //addConsumerCondition();
-        //convertHashtable();
-        //addLocationCondition();
-        //convertHashtable();
-        //addMinCompensationCondition();
-        //convertHashtable();
-        //addPreDuties();
-        //convertHashtable();
-        //addUsagePeriod();
-        //convertHashtable();
-        addPurposeCondition();
-        convertHashtable();
-        addCounterCondition();
-        convertHashtable();
-        return policylist;
-    }
 
 
 

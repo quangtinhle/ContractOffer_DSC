@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConsumerService {
@@ -44,13 +45,16 @@ public class ConsumerService {
 
         String artifactId = idsInstance.getId();
         String offersId = idsOfferedResource.getId();
+
+        //List<String> bodylist = new ArrayList<>();
+        ObjectMapper om = new ObjectMapper();
         for (IdsPermission i: idsPermission
              ) {
             i.setIdsTarget(artifactId);
         }
-
-        ObjectMapper om = new ObjectMapper();
         String body = om.writeValueAsString(idsPermission);
+
+
         System.out.println(body);
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(consumerContractUrl).newBuilder();
