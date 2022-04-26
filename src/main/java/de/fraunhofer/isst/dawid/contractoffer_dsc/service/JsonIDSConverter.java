@@ -191,10 +191,10 @@ public class JsonIDSConverter {
         }
     }
 
-    public boolean addUsagePeriod() {
+    public boolean addUsagePeriod_Old() {
         ArrayList<RightOperandEntity> durationEntities = new ArrayList<>();
         RightOperand elapsedTimeRightOperand = new RightOperand();
-        elapsedTimeRightOperand.setType(RightOperandType.DURATIONENTITY);
+        //elapsedTimeRightOperand.setType(RightOperandType.DURATIONENTITY);
 
         /*UsagePeriod usagePeriod = recieverOdrlPolicy.getUsagePeriod();
         String hour = "";
@@ -234,6 +234,22 @@ public class JsonIDSConverter {
         return false;
 
     }
+    public boolean addUsagePeriod() {
+
+        String duration = constraintInput.getUsagePeriod();
+        if (duration != "") {
+            RightOperand rightOperand = new RightOperand(duration, RightOperandType.DURATION);
+            ArrayList<RightOperand> rightOperands = new ArrayList<>();
+            rightOperands.add(rightOperand);
+            Condition elapsedTimeConstrain = new Condition(ConditionType.CONSTRAINT, LeftOperand.ELAPSED_TIME, Operator.SHORTER_EQ, rightOperands, null);
+            constraints.add(elapsedTimeConstrain);
+            return true;
+        }
+        return false;
+    }
+
+
+
 
     public boolean addDataHistory() {
         if(constraintInput.getDataHistory()!="") {
@@ -352,12 +368,12 @@ public class JsonIDSConverter {
         //convertHashtable();
         //addPreDuties();
         //convertHashtable();
-        //addUsagePeriod();
-        //convertHashtable();
+        addUsagePeriod();
+        convertHashtable();
         //addPurposeCondition();
         //onvertHashtable();
-        addCounterCondition();
-        convertHashtable();
+        //addCounterCondition();
+        //convertHashtable();
         return policylist;
     }
 

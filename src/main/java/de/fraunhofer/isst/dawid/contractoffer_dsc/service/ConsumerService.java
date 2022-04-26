@@ -38,7 +38,7 @@ public class ConsumerService {
         IdsContractOffer idsContractOffer = idsOfferedResource.getIdsContractOffer().get(0);
         List<IdsPermission> idsPermission = idsContractOffer.getIdsPermission();
 
-        System.out.println(new Gson().toJson(idsPermission));
+
         IdsReprensentation idsReprensentation = idsOfferedResource.getIdsReprensentation().get(0);
         IdsInstance idsInstance = idsReprensentation.getIdsInstance().get(0);
 
