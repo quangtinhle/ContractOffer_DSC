@@ -49,23 +49,20 @@ public class JsonIDSConverter {
 
     public List<Hashtable> getPolicylist() {
 
-        //addDataHistory();
-        //convertHashtable();
-        //addConsumerCondition();
-        //convertHashtable();
-        //addLocationCondition();
-        //convertHashtable();
-        //addMinCompensationCondition();
-        //convertHashtable();
-        //addPreDuties();
+        addDataHistory();
+        convertHashtable();
+        addConsumerCondition();
+        convertHashtable();
+        addLocationCondition();
+        convertHashtable();
+        addMinCompensationCondition();
+        convertHashtable();
         addIdentifiabilityCondition();
         convertHashtable();
-        //addUsagePeriod();
-        //convertHashtable();
-        addPurposeCondition();
+        addUsagePeriod();
         convertHashtable();
-        //addCounterCondition();
-        //convertHashtable();
+        addCounterCondition();
+        convertHashtable();
         return policylist;
     }
     public boolean addLocationCondition() {
@@ -290,48 +287,17 @@ public class JsonIDSConverter {
 
 
     public boolean addDataHistory() {
-        if(constraintInput.getDataHistory()!="") {
-
-            ArrayList<RightOperandEntity> durationEntities = new ArrayList<>();
-            RightOperand elapsedTimeRightOperand = new RightOperand();
-            elapsedTimeRightOperand.setType(RightOperandType.DURATIONENTITY);
-
-            //DataHistory dataHistory = recieverOdrlPolicy.getDataHistory();
-/*        String hour = "";
-        String day = "";
-        String month = "";
-        String year = "";
-        if (dataHistory.getDurationHour()!= null && !dataHistory.getDurationHour().isEmpty()) {
-            hour = "T" + dataHistory.getDurationHour() + TimeUnit.HOURS.getOdrlXsdDuration();
-        }
-        if (dataHistory.getDurationDay() != null && !dataHistory.getDurationDay().isEmpty()) {
-            day = dataHistory.getDurationDay() + TimeUnit.DAYS.getOdrlXsdDuration();
-        }
-        if (dataHistory.getDurationMonth() != null && !dataHistory.getDurationMonth().isEmpty()) {
-            month = dataHistory.getDurationMonth() + TimeUnit.MONTHS.getOdrlXsdDuration();
-        }
-        if (dataHistory.getDurationYear() != null && !dataHistory.getDurationYear().isEmpty()) {
-            year = dataHistory.getDurationYear() + TimeUnit.YEARS.getOdrlXsdDuration();
-        }*/
             String duration = constraintInput.getDataHistory();
 
-            if (!duration.equals("P")) {
-                RightOperandEntity hasDurationEntity = new RightOperandEntity(EntityType.HASDURATION, duration,
-                        RightOperandType.DURATION);
-                // hasDurationEntity.setTimeUnit(TimeUnit.valueOf(restrictTimeDurationUnit));
-                durationEntities.add(hasDurationEntity);
-            }
-
-            if (durationEntities.size() > 0) {
-                elapsedTimeRightOperand.setEntities(durationEntities);
-                ArrayList<RightOperand> elapsedTimeRightOperands = new ArrayList<>();
-                elapsedTimeRightOperands.add(elapsedTimeRightOperand);
-                Condition elapsedTimeConstraint = new Condition(ConditionType.CONSTRAINT, LeftOperand.DATA_HISTORY,
-                        Operator.SHORTER_EQ, elapsedTimeRightOperands, null);
-                constraints.add(elapsedTimeConstraint);
+            if (duration!="") {
+                RightOperand rightOperand = new RightOperand(duration, RightOperandType.DURATION);
+                ArrayList<RightOperand> rightOperands = new ArrayList<>();
+                rightOperands.add(rightOperand);
+                Condition dataHistoryTimeConstrain = new Condition(ConditionType.CONSTRAINT, LeftOperand.POLICY_EVALUATION_TIME, Operator.SHORTER_EQ, rightOperands, null);
+                constraints.add(dataHistoryTimeConstrain);
                 return true;
             }
-        }
+
         return false;
 
     }
