@@ -67,10 +67,10 @@ public class ContractService {
     }
 
     public void createDataModel() {
-        String test = "{\"title\":\" This is a test title \",\"description\":\" This is a test description \", \"testinfo\":\" This is a test info \" }";
+        //String test = "{\"title\":\" This is a test title \",\"description\":\" This is a test description \", \"testinfo\":\" This is a test info \" }";
         System.out.println(description);
-        //catalog = getLocation(apiUrl + "catalogs", "{\"description\":\"" + description + "\"}");
-        catalog = getLocation(apiUrl + "catalogs", test);
+        catalog = getLocation(apiUrl + "catalogs", "{\"description\":\"" + description + "\"}");
+        //catalog = getLocation(apiUrl + "catalogs", test);
         System.out.println(catalog);
         offer = getLocation(apiUrl + "offers", "{}");
         System.out.println(offer);
