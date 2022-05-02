@@ -22,8 +22,12 @@ public class ConsumerService {
             = MediaType.get("application/json; charset=utf-8");
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
     private String providerUrl;
-    private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
-    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
+    // for Docker in VM config
+    private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
+    private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
+    //for localtest
+    //private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
+    //private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
 
     public ConsumerService(String providerUrl) {
         this.providerUrl = providerUrl;

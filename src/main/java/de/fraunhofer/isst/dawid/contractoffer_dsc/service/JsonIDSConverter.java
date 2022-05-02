@@ -61,6 +61,8 @@ public class JsonIDSConverter {
         convertHashtable();
         addUsagePeriod();
         convertHashtable();
+        addPurposeCondition();
+        convertHashtable();
         addCounterCondition();
         convertHashtable();
         return policylist;

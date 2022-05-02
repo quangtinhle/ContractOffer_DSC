@@ -28,9 +28,13 @@ public class ContractService {
     @Value("${providerUrl}")
     private String providerUrl;
 
-    String apiUrl = "http://localhost:8080/api/";
-    String descriptionUrl = "http://localhost:8080/api/ids/description";
-    String recipient = "http://localhost:8080/api/ids/data";
+    String apiUrl = "http://providerconnector:8080/api/";
+    String descriptionUrl = "http://providerconnector:8080/api/ids/description";
+    String recipient = "http://providerconnector:8080/api/ids/data";
+
+    //String apiUrl = "http://localhost:8080/api/";
+    //String descriptionUrl = "http://localhost:8080/api/ids/description";
+    //String recipient = "http://localhost:8080/api/ids/data";
 
     String catalog, offer, representation, artifact, contract = "";
     String jsonContract = "";

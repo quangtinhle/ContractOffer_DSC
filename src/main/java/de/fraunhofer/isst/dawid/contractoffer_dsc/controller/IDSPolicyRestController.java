@@ -8,11 +8,9 @@ import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.RecieverPreference
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ConsumerService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ContractService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.PolicyService;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -26,7 +24,13 @@ public class IDSPolicyRestController {
     private List<Hashtable> policyList;
     private List<String> rulesLocationList;
 
-    @PostMapping("/contractoffer")
+
+    @GetMapping("/api/ids")
+    public String getDefault() {
+        return "Hello World";
+    }
+
+    @PostMapping("/api/ids/contract")
     public String getContractOffer(@RequestBody RecieverPreference recieverPreference) {
 
         Constraint constraint = recieverPreference.getConstraints();
@@ -40,7 +44,7 @@ public class IDSPolicyRestController {
         return contract;
     }
 
-    @PostMapping("/contractagreement")
+    @PostMapping("/api/ids/agrrement")
     public String getContractAgreement(@RequestParam String recipient) {
         ConsumerService consumerService = new ConsumerService(recipient);
         return consumerService.getContractAgreement();
