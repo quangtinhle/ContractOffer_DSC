@@ -45,8 +45,15 @@ public class IDSPolicyRestController {
     }
 
     @PostMapping("/api/ids/agrrement")
-    public String getContractAgreement(@RequestParam String recipient) {
-        ConsumerService consumerService = new ConsumerService(recipient);
-        return consumerService.getContractAgreement();
+    public String getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) {
+        ConsumerService consumerService = ConsumerService.getInstance(recipient);
+        return consumerService.getContractAgreement(catalog);
+    }
+
+    @GetMapping("api/ids/resourcecatalog")
+    public String getResourceCatalog(@RequestParam String recipient)
+    {
+        ConsumerService consumerService = ConsumerService.getInstance(recipient);
+        return consumerService.getProviderResourceCatalog();
     }
 }

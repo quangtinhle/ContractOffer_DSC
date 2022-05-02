@@ -18,26 +18,50 @@ import java.util.List;
 
 public class ConsumerService {
 
+    public static ConsumerService instance = null;
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
     private String providerUrl;
+    private ObjectMapper om = new ObjectMapper();
     // for Docker in VM config
-    private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
-    private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
+    //private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
+    //private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
     //for localtest
-    //private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
-    //private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
+    private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
+    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
 
-    public ConsumerService(String providerUrl) {
+    private ConsumerService(String providerUrl) {
         this.providerUrl = providerUrl;
+    }
+
+    public static ConsumerService getInstance(String providerUrl) {
+        if(instance==null) {
+            return new ConsumerService(providerUrl);
+        }
+        else {
+            return instance;
+        }
+    }
+
+
+    public String getProviderResourceCatalog()
+    {
+        String resourceCatalogResponse = getProviderDescription(providerUrl);
+        return resourceCatalogResponse;
     }
 
 
     @SneakyThrows
-    public String getContractAgreement() {
-        String resourceCatalogJsonString = getResourceCatalog(getProviderDescription(providerUrl));
-        ResourceCatalog resourceCatalog = getResourceCatalogObject(getContractRequest(resourceCatalogJsonString));
+    public String getContractAgreement(String catalog) {
+
+//        String resourceCatalogResponse = getProviderDescription(providerUrl);
+//        System.out.println(resourceCatalogResponse);
+//        String catalogLocation = getResourceCatalog(resourceCatalogResponse);
+
+//        System.out.println("Resource \n " + catalogLocation);
+        ResourceCatalog resourceCatalog = getResourceCatalogObject(getContractRequest(catalog));
+        //System.out.println("Resourcecatalog \n " + om.writeValueAsString(resourceCatalog));
 
         IdsOfferedResource idsOfferedResource = resourceCatalog.getIdsOfferedResources().get(0);
         IdsContractOffer idsContractOffer = idsOfferedResource.getIdsContractOffer().get(0);
@@ -51,7 +75,7 @@ public class ConsumerService {
         String offersId = idsOfferedResource.getId();
 
         //List<String> bodylist = new ArrayList<>();
-        ObjectMapper om = new ObjectMapper();
+
         for (IdsPermission i: idsPermission
              ) {
             i.setIdsTarget(artifactId);
@@ -59,7 +83,7 @@ public class ConsumerService {
         String body = om.writeValueAsString(idsPermission);
 
 
-        System.out.println(body);
+        //System.out.println(body);
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(consumerContractUrl).newBuilder();
 
@@ -124,14 +148,16 @@ public class ConsumerService {
         return jsonString;
     }
 
-    public String getResourceCatalog(String providerDescription) {
+    /*public String getResourceCatalog(String providerDescription) {
 
         JsonElement jsonElement = new JsonParser().parse(providerDescription);
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonArray resourceCatalog = jsonObject.get("ids:resourceCatalog").getAsJsonArray();
 
+
+
         return resourceCatalog.get(0).getAsJsonObject().get("@id").getAsString();
-    }
+    }*/
 
     @SneakyThrows
     public String getContractRequest(String resourceCatalog) {
@@ -176,7 +202,7 @@ public class ConsumerService {
 
     private ResourceCatalog getResourceCatalogObject(String resourceCatalogJsonString) {
         ResourceCatalog resourceCatalog = new ResourceCatalog();
-        ObjectMapper om = new ObjectMapper();
+
 
         try {
             resourceCatalog = om.readValue(resourceCatalogJsonString, ResourceCatalog.class);

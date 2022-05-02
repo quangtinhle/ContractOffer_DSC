@@ -12,6 +12,7 @@ public class RecieverPreference {
         private String active;
         private String dataProvider;
         private String targetData;
+        private String description;
         private Constraint constraints;
 
 }

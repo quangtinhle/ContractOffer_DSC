@@ -21,29 +21,31 @@ public class ContractService {
 
     private List<Hashtable> policyList;
     private ContractInformation contractInformation;
-
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
 
     private Gson gson;
     @Value("${providerUrl}")
     private String providerUrl;
-//Config for Docker VM compatible with quangtinhle/connector:1.0.0 ( 6.1.0)
-    String apiUrl = "http://providerconnector:8080/api/";
-    String descriptionUrl = "http://providerconnector:8080/api/ids/description";
-    String recipient = "http://providerconnector:8080/api/ids/data";
 
-    //String apiUrl = "http://localhost:8080/api/";
-    //String descriptionUrl = "http://localhost:8080/api/ids/description";
-    //String recipient = "http://localhost:8080/api/ids/data";
+    //Config for Docker VM compatible with quangtinhle/connector:1.0.0 ( 6.1.0)
+//    String apiUrl = "http://providerconnector:8080/api/";
+//    String descriptionUrl = "http://providerconnector:8080/api/ids/description";
+//    String recipient = "http://providerconnector:8080/api/ids/data";
+//
+    String apiUrl = "http://localhost:8080/api/";
+    String descriptionUrl = "http://localhost:8080/api/ids/description";
+    String recipient = "http://localhost:8080/api/ids/data";
+    String description ="";
 
     String catalog, offer, representation, artifact, contract = "";
     String jsonContract = "";
-    String accessUrl ="";
+    String accessUrl = "";
 
     public ContractService(List<Hashtable> policyList, RecieverPreference recieverPreference) {
         this.gson = new Gson();
         this.policyList = policyList;
         this.contractInformation = RecieverPreferenceConvert.convertToContractInformation(recieverPreference);
+        this.description = recieverPreference.getDescription();
         setContractInformation();
         setAccessUrl(recieverPreference);
         createDataModel();
@@ -51,22 +53,24 @@ public class ContractService {
     }
 
 
-
     public void setContractInformation() {
-        jsonContract =  gson.toJson(contractInformation);
+        jsonContract = gson.toJson(contractInformation);
     }
 
+
     public void setAccessUrl(RecieverPreference recieverPreference) {
-        if(recieverPreference.getTargetData()!="") {
+        if (recieverPreference.getTargetData() != "") {
             accessUrl = "{\"accessUrl\":\"" + recieverPreference.getTargetData() + "\"}";
-        }
-        else {
+        } else {
             accessUrl = "{\"value\":\" This is a test value \"}";
         }
     }
 
     public void createDataModel() {
-        catalog = getLocation(apiUrl + "catalogs", "{}");
+        String test = "{\"title\":\" This is a test title \",\"description\":\" This is a test description \", \"testinfo\":\" This is a test info \" }";
+        System.out.println(description);
+        //catalog = getLocation(apiUrl + "catalogs", "{\"description\":\"" + description + "\"}");
+        catalog = getLocation(apiUrl + "catalogs", test);
         System.out.println(catalog);
         offer = getLocation(apiUrl + "offers", "{}");
         System.out.println(offer);
@@ -80,6 +84,7 @@ public class ContractService {
         System.out.println(contract);
 
     }
+
     @SneakyThrows
     public String getLocation(String url, String json) {
 
@@ -92,7 +97,7 @@ public class ContractService {
         List<String> ruleLocationsList = new ArrayList<>();
         for (Hashtable hashtable : policyList
         ) {
-            String rule= gson.toJson(hashtable);
+            String rule = gson.toJson(hashtable);
             String location = connection.getLocation(apiUrl + "rules", rule);
             System.out.println(rule);
             ruleLocationsList.add(location);
@@ -146,6 +151,7 @@ public class ContractService {
         System.out.println(connection.getResponse(request));
 
     }
+
     @SneakyThrows
     public String getContractOfferProvider() {
 
