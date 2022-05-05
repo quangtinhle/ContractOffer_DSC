@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.connection.OkHttpConnection;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.model.output.agrrement.Agrrement;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.resource.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import okio.BufferedSink;
@@ -15,14 +18,16 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+@Getter
+@Setter
 public class ConsumerService {
 
-    public static ConsumerService instance = null;
+    private static ConsumerService instance = null;
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
     private String providerUrl;
+    private String citizenUUID, preferenceUUID;
     private ObjectMapper om = new ObjectMapper();
     // for Docker in VM config
     //private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
@@ -31,18 +36,17 @@ public class ConsumerService {
     private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
     private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
 
-    private ConsumerService(String providerUrl) {
-        this.providerUrl = providerUrl;
+    private ConsumerService(String recipient) {
+        this.providerUrl = recipient;
+
     }
 
-    public static ConsumerService getInstance(String providerUrl) {
+    public static ConsumerService getInstance(String recipient) {
         if(instance==null) {
-            return new ConsumerService(providerUrl);
+            instance = new ConsumerService(recipient);
         }
-        else {
             return instance;
-        }
-    }
+}
 
 
     public String getProviderResourceCatalog()
@@ -53,20 +57,22 @@ public class ConsumerService {
 
 
     @SneakyThrows
-    public String getContractAgreement(String catalog) {
+    public Agrrement getContractAgreement(String catalog) {
 
 //        String resourceCatalogResponse = getProviderDescription(providerUrl);
 //        System.out.println(resourceCatalogResponse);
 //        String catalogLocation = getResourceCatalog(resourceCatalogResponse);
 
 //        System.out.println("Resource \n " + catalogLocation);
+
         ResourceCatalog resourceCatalog = getResourceCatalogObject(getContractRequest(catalog));
         //System.out.println("Resourcecatalog \n " + om.writeValueAsString(resourceCatalog));
 
         IdsOfferedResource idsOfferedResource = resourceCatalog.getIdsOfferedResources().get(0);
         IdsContractOffer idsContractOffer = idsOfferedResource.getIdsContractOffer().get(0);
         List<IdsPermission> idsPermission = idsContractOffer.getIdsPermission();
-
+        String citizenUUID = idsContractOffer.getCitizenUUID();
+        String preferenceUUID = idsContractOffer.getPreferenceUUID();
 
         IdsReprensentation idsReprensentation = idsOfferedResource.getIdsReprensentation().get(0);
         IdsInstance idsInstance = idsReprensentation.getIdsInstance().get(0);
@@ -103,9 +109,11 @@ public class ConsumerService {
         Response response = connection.getResponse(request);
         String jsonStringResponse = response.body().string();
 
-
-
-        return jsonStringResponse;
+        Agrrement agrrement = new Agrrement();
+        agrrement = om.readValue(jsonStringResponse,Agrrement.class);
+        agrrement.citizenUUID = citizenUUID;
+        agrrement.preferenceUUID = preferenceUUID;
+        return agrrement;
     }
 
     @SneakyThrows

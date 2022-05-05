@@ -19,17 +19,16 @@ public class OkHttpConnection {
 
     public static OkHttpConnection getInstance() {
         if(instance == null) {
-            return new OkHttpConnection();
+            instance =  new OkHttpConnection();
         }
-        else
             return instance;
     }
 
     public String getLocation(String url, String json) throws IOException {
         Request request = getRequest(url,json);
-        System.out.println(request.toString());
+        //System.out.println(request.toString());
         Response response = getResponse(request);
-        System.out.println(response.body().toString());
+        //System.out.println(response.body().toString());
         return response.header("Location");
     }
 

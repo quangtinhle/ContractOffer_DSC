@@ -63,8 +63,10 @@ public class JsonIDSConverter {
         convertHashtable();
         addPurposeCondition();
         convertHashtable();
-        addCounterCondition();
+        addDelay();
         convertHashtable();
+        //addCounterCondition();
+        //convertHashtable();
         return policylist;
     }
     public boolean addLocationCondition() {
@@ -285,6 +287,20 @@ public class JsonIDSConverter {
         return false;
     }
 
+    public boolean addDelay() {
+
+        String duration = constraintInput.getDelay();
+        if (duration != "") {
+            RightOperand rightOperand = new RightOperand(duration, RightOperandType.DURATION);
+            ArrayList<RightOperand> rightOperands = new ArrayList<>();
+            rightOperands.add(rightOperand);
+            Condition elapsedTimeConstrain = new Condition(ConditionType.CONSTRAINT, LeftOperand.DELAY, Operator.DURATION_EQ, rightOperands, null);
+            constraints.add(elapsedTimeConstrain);
+            return true;
+        }
+        return false;
+    }
+
 
 
 
@@ -337,7 +353,7 @@ public class JsonIDSConverter {
         //odrlPolicy.setType(PolicyType.getFromIdsString("ids:Contract" + "Offer"));
         jsonPolicyString = OdrlCreator.createODRL(odrlPolicy);
         if(constraints.size()>0) {
-            constraints.remove(0);
+            constraints.removeAll(constraints);
         }
         }
         return jsonPolicyString;

@@ -99,9 +99,9 @@ public class ContractService {
         ) {
             String rule = gson.toJson(hashtable);
             String location = connection.getLocation(apiUrl + "rules", rule);
-            System.out.println(rule);
+            //System.out.println(rule);
             ruleLocationsList.add(location);
-            System.out.println(location);
+            //System.out.println(location);
         }
         return ruleLocationsList;
     }
@@ -148,7 +148,7 @@ public class ContractService {
     @SneakyThrows
     private void addRuletoContract(String contract, String rule) {
         Request request = connection.getRequest(contract + "/rules", "[\"" + rule + "\"]");
-        System.out.println(connection.getResponse(request));
+        connection.getResponse(request);
 
     }
 
