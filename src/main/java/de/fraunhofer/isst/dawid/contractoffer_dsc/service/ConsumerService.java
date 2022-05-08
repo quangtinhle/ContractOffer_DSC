@@ -32,6 +32,7 @@ public class ConsumerService {
     // for Docker in VM config
     //private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
     //private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
+    private Boolean isVM = false;
     //for localtest
     private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
     private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
@@ -96,7 +97,7 @@ public class ConsumerService {
         urlBuilder.addQueryParameter("recipient", providerUrl);
         urlBuilder.addQueryParameter("resourceIds", offersId);
         urlBuilder.addQueryParameter("artifactIds", artifactId);
-        urlBuilder.addQueryParameter("download", "true");
+        urlBuilder.addQueryParameter("download", "false");
 
         RequestBody requestBody = RequestBody.create(JSON,body);
         String urlRequest = urlBuilder.build().toString();
@@ -113,7 +114,20 @@ public class ConsumerService {
         agrrement = om.readValue(jsonStringResponse,Agrrement.class);
         agrrement.citizenUUID = citizenUUID;
         agrrement.preferenceUUID = preferenceUUID;
+
+        if(isVM) {
+            String ipVM = "http://153.96.23.42:8081";
+            String newhref = agrrement._links.self.href.replaceFirst("http://consumerconnector:8080",ipVM);
+            agrrement._links.self.href = newhref;
+            newhref = agrrement._links.artifacts.href.replaceFirst("http://consumerconnector:8080",ipVM);
+            agrrement._links.artifacts.href = newhref;
+        }
+
         return agrrement;
+    }
+
+    public void setAgrrementLinkVM(Agrrement agrrement) {
+
     }
 
     @SneakyThrows

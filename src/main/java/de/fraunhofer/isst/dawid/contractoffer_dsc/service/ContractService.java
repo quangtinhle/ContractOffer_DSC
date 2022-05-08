@@ -28,10 +28,10 @@ public class ContractService {
     private String providerUrl;
 
     //Config for Docker VM compatible with quangtinhle/connector:1.0.0 ( 6.1.0)
-//    String apiUrl = "http://providerconnector:8080/api/";
-//    String descriptionUrl = "http://providerconnector:8080/api/ids/description";
-//    String recipient = "http://providerconnector:8080/api/ids/data";
-//
+    //String apiUrl = "http://providerconnector:8080/api/";
+    //String descriptionUrl = "http://providerconnector:8080/api/ids/description";
+    //String recipient = "http://providerconnector:8080/api/ids/data";
+
     String apiUrl = "http://localhost:8080/api/";
     String descriptionUrl = "http://localhost:8080/api/ids/description";
     String recipient = "http://localhost:8080/api/ids/data";

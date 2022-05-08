@@ -6,6 +6,9 @@ import de.fraunhofer.isst.dawid.contractoffer_dsc.model.output.agrrement.Agrreme
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ConsumerService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.ContractService;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.service.PolicyService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Hashtable;
@@ -22,12 +25,12 @@ public class IDSPolicyRestController {
 
 
     @GetMapping("/api/ids")
-    public String getDefault() {
-        return "Hello World";
+    public ResponseEntity<String> getDefault() {
+        return new ResponseEntity<String>("Contract Service is running...",HttpStatus.OK);
     }
 
-    @PostMapping("/api/ids/contract")
-    public String getContractOffer(@RequestBody RecieverPreference recieverPreference) {
+    @PostMapping(value = "/api/ids/contract", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getContractOffer(@RequestBody RecieverPreference recieverPreference) {
 
         Constraint constraint = recieverPreference.getConstraints();
         policyService = new PolicyService(constraint);
@@ -36,20 +39,21 @@ public class IDSPolicyRestController {
         contractService = new ContractService(policyList, recieverPreference);
         rulesLocationList = contractService.getLocationRule();
         String contract = contractService.getContractOfferProvider();
-        return contract;
+        return new ResponseEntity<String>(contract, HttpStatus.CREATED);
     }
 
     @PostMapping("/api/ids/agrrement")
-    public Agrrement getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) {
+    public ResponseEntity<Agrrement> getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) {
         consumerService = ConsumerService.getInstance(recipient);
 
-        return consumerService.getContractAgreement(catalog);
+        return new ResponseEntity<Agrrement>(consumerService.getContractAgreement(catalog),HttpStatus.CREATED);
     }
 
-    @GetMapping("api/ids/resourcecatalog")
-    public String getResourceCatalog(@RequestParam String recipient)
+    @GetMapping(value = "api/ids/resourcecatalog", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getResourceCatalog(@RequestParam String recipient)
     {
         consumerService = ConsumerService.getInstance(recipient);
-        return consumerService.getProviderResourceCatalog();
+        String response = consumerService.getProviderResourceCatalog();
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

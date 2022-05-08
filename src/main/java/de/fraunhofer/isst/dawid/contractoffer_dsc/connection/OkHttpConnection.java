@@ -26,9 +26,7 @@ public class OkHttpConnection {
 
     public String getLocation(String url, String json) throws IOException {
         Request request = getRequest(url,json);
-        //System.out.println(request.toString());
         Response response = getResponse(request);
-        //System.out.println(response.body().toString());
         return response.header("Location");
     }
 

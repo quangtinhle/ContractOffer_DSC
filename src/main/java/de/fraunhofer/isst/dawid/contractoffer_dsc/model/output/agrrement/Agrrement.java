@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dawid.contractoffer_dsc.model.output.agrrement;
 
+import lombok.Setter;
+
+@Setter
 public class Agrrement {
     public String citizenUUID;
     public String preferenceUUID;
