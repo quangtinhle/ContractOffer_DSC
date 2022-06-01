@@ -6,6 +6,7 @@ import lombok.Setter;
 public class Agrrement {
     public String citizenUUID;
     public String preferenceUUID;
+    public Boolean active;
     public String creationDate;
     public String modificationDate;
     public String remoteId;

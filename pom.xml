@@ -84,7 +84,7 @@
                         <!--<mainClass>ContractoffersApplication</mainClass>-->
                     </container>
                     <to>
-                        <image>registry.hub.docker.com/quangtinhle/dawid:1.0.1</image>
+                        <image>registry.hub.docker.com/quangtinhle/dawid:1.0.3</image>
                     </to>
                 </configuration>
             </plugin>

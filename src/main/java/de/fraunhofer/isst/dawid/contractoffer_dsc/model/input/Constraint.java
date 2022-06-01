@@ -15,5 +15,5 @@ public class Constraint {
     private String usagePeriod;
     private String purpose;
     private String counter;
-    private String delay;
+    private String waitingtime;
 }

@@ -27,15 +27,17 @@ public class ConsumerService {
             = MediaType.get("application/json; charset=utf-8");
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
     private String providerUrl;
-    private String citizenUUID, preferenceUUID;
+    //private String citizenUUID, preferenceUUID;
+    //private Boolean active;
     private ObjectMapper om = new ObjectMapper();
     // for Docker in VM config
-    //private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
-    //private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
-    private Boolean isVM = false;
+    private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
+    private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
+    private Boolean isVM = true;
     //for localtest
-    private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
-    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
+//    private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
+//    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
+//    private Boolean isVM = false;
 
     private ConsumerService(String recipient) {
         this.providerUrl = recipient;
@@ -74,6 +76,8 @@ public class ConsumerService {
         List<IdsPermission> idsPermission = idsContractOffer.getIdsPermission();
         String citizenUUID = idsContractOffer.getCitizenUUID();
         String preferenceUUID = idsContractOffer.getPreferenceUUID();
+        Boolean active = idsContractOffer.getActive();
+
 
         IdsReprensentation idsReprensentation = idsOfferedResource.getIdsReprensentation().get(0);
         IdsInstance idsInstance = idsReprensentation.getIdsInstance().get(0);
@@ -114,6 +118,7 @@ public class ConsumerService {
         agrrement = om.readValue(jsonStringResponse,Agrrement.class);
         agrrement.citizenUUID = citizenUUID;
         agrrement.preferenceUUID = preferenceUUID;
+        agrrement.active = active;
 
         if(isVM) {
             String ipVM = "http://153.96.23.42:8081";

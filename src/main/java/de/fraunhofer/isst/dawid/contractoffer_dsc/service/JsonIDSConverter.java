@@ -4,7 +4,6 @@ import de.fraunhofer.iese.ids.odrl.policy.library.model.*;
 import de.fraunhofer.iese.ids.odrl.policy.library.model.enums.*;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.Constraint;
 
-import lombok.Getter;
 import util.OdrlCreator;
 
 import java.net.URI;
@@ -63,7 +62,7 @@ public class JsonIDSConverter {
         convertHashtable();
         addPurposeCondition();
         convertHashtable();
-        addDelay();
+        addWaitingTime();
         convertHashtable();
         //addCounterCondition();
         //convertHashtable();
@@ -287,9 +286,9 @@ public class JsonIDSConverter {
         return false;
     }
 
-    public boolean addDelay() {
+    public boolean addWaitingTime() {
 
-        String duration = constraintInput.getDelay();
+        String duration = constraintInput.getWaitingtime();
         if (duration != "") {
             RightOperand rightOperand = new RightOperand(duration, RightOperandType.DURATION);
             ArrayList<RightOperand> rightOperands = new ArrayList<>();

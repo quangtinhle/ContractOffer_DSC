@@ -20,5 +20,5 @@ public class IdsContractOffer {
     private IdsConsumer idsConsumer;
     private String preferenceUUID;
     private String citizenUUID;
-    private String active;
+    private Boolean active;
 }

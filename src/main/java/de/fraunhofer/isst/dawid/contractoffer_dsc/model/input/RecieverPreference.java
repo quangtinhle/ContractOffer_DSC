@@ -9,7 +9,7 @@ public class RecieverPreference {
 
         private String citizenUUID;
         private String preferenceUUID;
-        private String active;
+        private Boolean active;
         private String dataProvider;
         private String targetData;
         private String description;

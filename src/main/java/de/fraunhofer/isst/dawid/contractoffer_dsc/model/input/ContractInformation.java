@@ -11,5 +11,5 @@ public class ContractInformation {
     private String provider;
     private String citizenUUID;
     private String preferenceUUID;
-    private String active;
+    private Boolean active;
 }
