@@ -26,7 +26,7 @@ public class IDSPolicyRestController {
 
     @GetMapping("/api/ids")
     public ResponseEntity<String> getDefault() {
-        return new ResponseEntity<String>("Contract Service is running...",HttpStatus.OK);
+        return new ResponseEntity<>("Contract Service is running...", HttpStatus.OK);
     }
 
     @PostMapping(value = "/api/ids/contract", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,21 +39,26 @@ public class IDSPolicyRestController {
         contractService = new ContractService(policyList, recieverPreference);
         rulesLocationList = contractService.getLocationRule();
         String contract = contractService.getContractOfferProvider();
-        return new ResponseEntity<String>(contract, HttpStatus.CREATED);
+        return new ResponseEntity<>(contract, HttpStatus.CREATED);
     }
 
     @PostMapping("/api/ids/agrrement")
-    public ResponseEntity<Agrrement> getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) {
+    public ResponseEntity<Object> getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) {
         consumerService = ConsumerService.getInstance(recipient);
-
-        return new ResponseEntity<Agrrement>(consumerService.getContractAgreement(catalog),HttpStatus.CREATED);
+        if (consumerService.checkConditionLocationAvailable(catalog)) {
+            if(consumerService.verifyConditionLocation()) {
+                Agrrement agrrement = consumerService.getContractAgreement();
+                return new ResponseEntity<>(agrrement, HttpStatus.CREATED);
+            } else
+                return new ResponseEntity<>("Policy restriction detected", HttpStatus.PRECONDITION_FAILED);
+        } else
+             return new ResponseEntity<>(consumerService.getContractAgreement(), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "api/ids/resourcecatalog", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getResourceCatalog(@RequestParam String recipient)
-    {
+    public ResponseEntity<String> getResourceCatalog(@RequestParam String recipient) {
         consumerService = ConsumerService.getInstance(recipient);
         String response = consumerService.getProviderResourceCatalog();
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

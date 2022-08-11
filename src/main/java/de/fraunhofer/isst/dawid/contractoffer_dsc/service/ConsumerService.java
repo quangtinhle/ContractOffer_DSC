@@ -22,22 +22,30 @@ import java.util.List;
 @Setter
 public class ConsumerService {
 
+
+    private ResourceCatalog resourceCatalog;
+    private IdsOfferedResource idsOfferedResource;
+    private IdsContractOffer idsContractOffer;
+    private List<IdsPermission> idsPermission;
     private static ConsumerService instance = null;
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
     private final OkHttpConnection connection = OkHttpConnection.getInstance();
     private String providerUrl;
-    //private String citizenUUID, preferenceUUID;
-    //private Boolean active;
+
+    private String location;
+
     private ObjectMapper om = new ObjectMapper();
     // for Docker in VM config
-    private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
-    private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
-    private Boolean isVM = true;
+//    private String consumerDescriptionUrl = "http://consumerconnector:8080/api/ids/description";
+//    private String consumerContractUrl = "http://consumerconnector:8080/api/ids/contract";
+//    private Boolean isVM = true;
     //for localtest
-//    private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
-//    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
-//    private Boolean isVM = false;
+    private String consumerDescriptionUrl = "http://localhost:8081/api/ids/description";
+    private String consumerContractUrl = "http://localhost:8081/api/ids/contract";
+
+    private String consumerConnector = "http://localhost:8081/api/connector";
+    private Boolean isVM = false;
 
     private ConsumerService(String recipient) {
         this.providerUrl = recipient;
@@ -47,6 +55,7 @@ public class ConsumerService {
     public static ConsumerService getInstance(String recipient) {
         if(instance==null) {
             instance = new ConsumerService(recipient);
+
         }
             return instance;
 }
@@ -59,21 +68,11 @@ public class ConsumerService {
     }
 
 
+
     @SneakyThrows
-    public Agrrement getContractAgreement(String catalog) {
+    public Agrrement getContractAgreement() {
 
-//        String resourceCatalogResponse = getProviderDescription(providerUrl);
-//        System.out.println(resourceCatalogResponse);
-//        String catalogLocation = getResourceCatalog(resourceCatalogResponse);
 
-//        System.out.println("Resource \n " + catalogLocation);
-
-        ResourceCatalog resourceCatalog = getResourceCatalogObject(getContractRequest(catalog));
-        //System.out.println("Resourcecatalog \n " + om.writeValueAsString(resourceCatalog));
-
-        IdsOfferedResource idsOfferedResource = resourceCatalog.getIdsOfferedResources().get(0);
-        IdsContractOffer idsContractOffer = idsOfferedResource.getIdsContractOffer().get(0);
-        List<IdsPermission> idsPermission = idsContractOffer.getIdsPermission();
         String citizenUUID = idsContractOffer.getCitizenUUID();
         String preferenceUUID = idsContractOffer.getPreferenceUUID();
         Boolean active = idsContractOffer.getActive();
@@ -94,7 +93,6 @@ public class ConsumerService {
         String body = om.writeValueAsString(idsPermission);
 
 
-        //System.out.println(body);
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(consumerContractUrl).newBuilder();
 
@@ -114,7 +112,7 @@ public class ConsumerService {
         Response response = connection.getResponse(request);
         String jsonStringResponse = response.body().string();
 
-        Agrrement agrrement = new Agrrement();
+        Agrrement agrrement;
         agrrement = om.readValue(jsonStringResponse,Agrrement.class);
         agrrement.citizenUUID = citizenUUID;
         agrrement.preferenceUUID = preferenceUUID;
@@ -129,11 +127,10 @@ public class ConsumerService {
         }
 
         return agrrement;
-    }
 
-    public void setAgrrementLinkVM(Agrrement agrrement) {
 
     }
+
 
     @SneakyThrows
     public String getProviderDescription(String recipient) {
@@ -185,6 +182,31 @@ public class ConsumerService {
 
         return resourceCatalog.get(0).getAsJsonObject().get("@id").getAsString();
     }*/
+
+    public boolean verifyConditionLocation() {
+        ConnectorDescription description = getConsumerConnectorDescription(consumerConnector);
+        if(location.equalsIgnoreCase(description.idsDescription.get(0).value)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkConditionLocationAvailable(String catalog) {
+        resourceCatalog = getResourceCatalogObject(getContractRequest(catalog));
+        idsOfferedResource = resourceCatalog.getIdsOfferedResources().get(0);
+        idsContractOffer = idsOfferedResource.getIdsContractOffer().get(0);
+        idsPermission = idsContractOffer.getIdsPermission();
+        final String positioncode = "https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION";
+        for (IdsPermission i: idsPermission
+             ) {
+            if(positioncode.equalsIgnoreCase(i.getIdsConstraint().get(0).getIdsLeftOperand().id))
+            {
+                location = i.getIdsConstraint().get(0).getIdsRightOperand().value;
+                return true;
+            }
+        }
+        return false;
+    }
 
     @SneakyThrows
     public String getContractRequest(String resourceCatalog) {
@@ -238,6 +260,33 @@ public class ConsumerService {
         }
 
         return resourceCatalog;
+
+    }
+
+
+    @SneakyThrows
+    public ConnectorDescription getConsumerConnectorDescription(String consumerDescriptionUrl) {
+        ConnectorDescription connectorDescription;
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(consumerDescriptionUrl).newBuilder();
+
+        String urlRequest = urlBuilder.build().toString();
+        Request request = new Request.Builder().url(urlRequest).build();
+        Response response = connection.getResponse(request);
+        String jsonString = response.body().string();
+        ObjectMapper mapper = new ObjectMapper();
+
+        connectorDescription = mapper.readValue(jsonString,ConnectorDescription.class);
+
+
+        //ContractOffer contractOfferProvider = getContractOfferObject(body);
+        //contractOfferProvider.idsConsumer.setId("Https://aisec.fraunhofer.de");
+        //Gson gson = new Gson();
+        //String contractoffers = gson.toJson(contractOffer);
+
+        //ObjectMapper mapper = new ObjectMapper();
+        //mapper.writeValue(new File(""),contractOffer);
+        //contractOfferProvider.setIdsTarget("Buchungen von Bus & Bahn Tickets");
+        return connectorDescription;
 
     }
 }
