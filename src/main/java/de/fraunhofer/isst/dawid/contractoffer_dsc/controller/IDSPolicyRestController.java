@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dawid.contractoffer_dsc.controller;
 
+import de.fraunhofer.isst.dawid.contractoffer_dsc.execption.ErrorMessage;
+import de.fraunhofer.isst.dawid.contractoffer_dsc.execption.PolicyRestrictionException;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.Constraint;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.input.RecieverPreference;
 import de.fraunhofer.isst.dawid.contractoffer_dsc.model.output.agrrement.Agrrement;
@@ -43,14 +45,14 @@ public class IDSPolicyRestController {
     }
 
     @PostMapping("/api/ids/agrrement")
-    public ResponseEntity<Object> getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) {
+    public ResponseEntity<Object> getContractAgreement(@RequestParam String recipient, @RequestParam String catalog) throws PolicyRestrictionException {
         consumerService = ConsumerService.getInstance(recipient);
         if (consumerService.checkConditionLocationAvailable(catalog)) {
             if(consumerService.verifyConditionLocation()) {
                 Agrrement agrrement = consumerService.getContractAgreement();
                 return new ResponseEntity<>(agrrement, HttpStatus.CREATED);
             } else
-                return new ResponseEntity<>("Policy restriction detected", HttpStatus.PRECONDITION_FAILED);
+                return new ResponseEntity<>(new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION).getMessage(),HttpStatus.PRECONDITION_FAILED);
         } else
              return new ResponseEntity<>(consumerService.getContractAgreement(), HttpStatus.CREATED);
     }

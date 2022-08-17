@@ -48,22 +48,22 @@ public class JsonIDSConverter {
 
     public List<Hashtable> getPolicylist() {
 
-//        addDataHistory();
-//        convertHashtable();
+        addDataHistory();
+        convertHashtable();
         addConsumerCondition();
         convertHashtable();
         addLocationCondition();
         convertHashtable();
-//        addMinCompensationCondition();
-//        convertHashtable();
-//        addIdentifiabilityCondition();
-//        convertHashtable();
-//        addUsagePeriod();
-//        convertHashtable();
-//        addPurposeCondition();
-//        convertHashtable();
-//        addWaitingTime();
-//        convertHashtable();
+        addMinCompensationCondition();
+        convertHashtable();
+        addIdentifiabilityCondition();
+        convertHashtable();
+        addUsagePeriod();
+        convertHashtable();
+        addPurposeCondition();
+        convertHashtable();
+        addWaitingTime();
+        convertHashtable();
         addCounterCondition();
         convertHashtable();
         return policylist;
